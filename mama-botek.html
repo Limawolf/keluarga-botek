@@ -1,0 +1,470 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MARGA BOTEK</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #121212;
+            color: #fff;
+            padding: 20px;
+            transition: all 0.3s ease-in-out;
+            margin: 0;
+        }
+
+        h1 {
+            color: #00e6e6;
+            text-align: center;
+            margin-bottom: 20px;
+            font-size: 36px;
+            font-weight: bold;
+            text-shadow: 0 0 10px #00e6e6, 0 0 20px #00e6e6, 0 0 30px #00e6e6;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            animation: fadeIn 1s ease-in-out;
+            margin-top: 20px;
+        }
+
+        th, td {
+            border: 1px solid #ddd;
+            padding: 10px;
+            text-align: center;
+            font-size: 14px;
+        }
+
+        th {
+            background-color: #222;
+            color: #00e6e6;
+            font-size: 16px;
+            text-shadow: 0 0 10px #00e6e6, 0 0 20px #00e6e6;
+        }
+
+        td {
+            background-color: #333;
+        }
+
+        .row-label {
+            width: 350px; /* Lebar kolom Hari diperpanjang */
+            background-color: #00e6e6;
+            color: black;
+            font-weight: bold;
+            text-align: left;
+            padding-left: 10px;
+            border: 2px solid #ddd;
+            text-shadow: 0 0 10px #00e6e6, 0 0 20px #00e6e6;
+        }
+
+        td input {
+            width: 100%;
+            border: none;
+            text-align: center;
+            padding: 5px;
+            background-color: #444;
+            color: white;
+        }
+
+        td input:focus {
+            outline: none;
+            background-color: #555;
+        }
+
+        .button-container {
+            margin: 20px 0;
+            text-align: center;
+        }
+
+        .button-container button {
+            padding: 12px 20px;
+            font-size: 18px;
+            cursor: pointer;
+            background-color: #00e6e6;
+            color: black;
+            border: none;
+            border-radius: 5px;
+            transition: all 0.3s ease;
+            box-shadow: 0 0 10px #00e6e6, 0 0 20px #00e6e6;
+        }
+
+        .button-container button:hover {
+            background-color: #00b3b3;
+        }
+
+        .status-btn {
+            padding: 5px 10px;
+            font-size: 14px;
+            cursor: pointer;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            color: white;
+            transition: all 0.3s ease;
+            box-shadow: 0 0 10px #00e6e6, 0 0 20px #00e6e6;
+        }
+
+        .status-btn.done {
+            background-color: #27ae60;
+        }
+
+        .status-btn.pending {
+            background-color: #e74c3c;
+        }
+
+        .status-btn:hover {
+            background-color: #f39c12;
+        }
+
+        .action-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .action-buttons button {
+            padding: 8px 12px;
+            font-size: 14px;
+            cursor: pointer;
+            background-color: #f0ad4e;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            transition: all 0.3s ease;
+            box-shadow: 0 0 10px #f39c12, 0 0 20px #f39c12;
+        }
+
+        .action-buttons button:hover {
+            background-color: #ec971f;
+        }
+
+        .delete-btn {
+            background-color: #e74c3c;
+        }
+
+        .delete-btn:hover {
+            background-color: #c0392b;
+        }
+
+        .edit-btn {
+            background-color: #3498db;
+        }
+
+        .edit-btn:hover {
+            background-color: #2980b9;
+        }
+
+        .next-button-container {
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        .next-button-container button {
+            padding: 12px 20px;
+            font-size: 18px;
+            cursor: pointer;
+            background-color: #2ecc71;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            transition: all 0.3s ease;
+            box-shadow: 0 0 10px #2ecc71, 0 0 20px #2ecc71;
+        }
+
+        .next-button-container button:hover {
+            background-color: #27ae60;
+        }
+
+        .chart-container {
+            width: 80%;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #222;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            border-radius: 10px;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
+
+        @media (max-width: 768px) {
+            table {
+                font-size: 12px;
+            }
+
+            .button-container button {
+                font-size: 14px;
+                padding: 10px;
+            }
+
+            th, td {
+                padding: 8px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div id="page1">
+        <h1>MARGA BOTEK</h1>
+
+        <div class="button-container">
+            <button onclick="addRow()">Tambah Baris</button>
+        </div>
+
+        <table id="spreadsheet">
+            <thead>
+                <tr>
+                    <th class="row-label">Hari</th>
+                    <th>1</th>
+                    <th>2</th>
+                    <th>3</th>
+                    <th>4</th>
+                    <th>5</th>
+                    <th>6</th>
+                    <th>7</th>
+                    <th>8</th>
+                    <th>9</th>
+                    <th>10</th>
+                    <th>11</th>
+                    <th>12</th>
+                    <th>13</th>
+                    <th>14</th>
+                    <th>15</th>
+                    <th>16</th>
+                    <th>17</th>
+                    <th>18</th>
+                    <th>19</th>
+                    <th>20</th>
+                    <th>21</th>
+                    <th>22</th>
+                    <th>23</th>
+                    <th>24</th>
+                    <th>25</th>
+                    <th>26</th>
+                    <th>27</th>
+                    <th>28</th>
+                    <th>29</th>
+                    <th>30</th>
+                    <th>31</th>
+                    <th>Aksi</th>
+                </tr>
+            </thead>
+            <tbody id="tbody">
+                <!-- Data tabel akan dimuat di sini -->
+            </tbody>
+        </table>
+
+        <div class="next-button-container">
+            <button onclick="goToPage2()">Lanjutkan ke Grafik</button>
+        </div>
+    </div>
+
+    <div id="page2" style="display: none;">
+        <h1>Grafik Kedisiplinan MARGA BOTEK</h1>
+
+        <div class="chart-container">
+            <canvas id="statusChart"></canvas>
+        </div>
+
+        <div class="button-container">
+            <button onclick="goBack()">Kembali ke Halaman 1</button>
+        </div>
+    </div>
+
+    <script>
+        // Fungsi untuk menambah baris baru ke tabel
+        function addRow() {
+            const tableData = JSON.parse(localStorage.getItem('tableData')) || [];
+            const rowCount = tableData.length + 1;
+            const newRow = {
+                name: `Baris ${rowCount}`,
+                status: Array(31).fill("pending") // Status default "Belum Selesai"
+            };
+
+            tableData.push(newRow);
+            localStorage.setItem('tableData', JSON.stringify(tableData));
+
+            loadTable(); // Memuat ulang tabel setelah data ditambah
+        }
+
+        // Fungsi untuk memuat data tabel dari localStorage
+        function loadTable() {
+            const tableData = JSON.parse(localStorage.getItem('tableData')) || [];
+            const tbody = document.getElementById('tbody');
+            tbody.innerHTML = '';
+
+            tableData.forEach((rowData, index) => {
+                const newRow = tbody.insertRow();
+                const cell1 = newRow.insertCell(0);
+                const input1 = document.createElement("input");
+                input1.type = "text";
+                input1.value = rowData.name || `Baris ${index + 1}`;
+                input1.disabled = true;
+                cell1.appendChild(input1);
+
+                for (let i = 0; i < 31; i++) {
+                    const cell = newRow.insertCell(i + 1);
+                    const button = document.createElement("button");
+                    button.classList.add("status-btn", rowData.status[i] === "done" ? "done" : "pending");
+                    button.textContent = rowData.status[i] === "done" ? "Selesai" : "Belum Selesai";
+                    button.onclick = function() {
+                        toggleStatus(button, index, i);
+                    };
+                    cell.appendChild(button);
+                }
+
+                const actionCell = newRow.insertCell(32);
+                const editBtn = document.createElement("button");
+                editBtn.classList.add("edit-btn");
+                editBtn.textContent = "Edit";
+                editBtn.onclick = function() {
+                    editRow(editBtn, index);
+                };
+                actionCell.appendChild(editBtn);
+
+                const deleteBtn = document.createElement("button");
+                deleteBtn.classList.add("delete-btn");
+                deleteBtn.textContent = "Hapus";
+                deleteBtn.onclick = function() {
+                    deleteRow(deleteBtn, index);
+                };
+                actionCell.appendChild(deleteBtn);
+            });
+        }
+
+        // Fungsi untuk mengedit nama baris
+        function editRow(btn, index) {
+            const tableData = JSON.parse(localStorage.getItem('tableData')) || [];
+            const row = btn.closest("tr");
+            const input = row.querySelector("td input");
+
+            input.disabled = !input.disabled;
+            tableData[index].name = input.value;
+
+            localStorage.setItem('tableData', JSON.stringify(tableData));
+        }
+
+        // Fungsi untuk menghapus baris
+        function deleteRow(btn, index) {
+            const tableData = JSON.parse(localStorage.getItem('tableData')) || [];
+            tableData.splice(index, 1);
+            localStorage.setItem('tableData', JSON.stringify(tableData));
+
+            loadTable(); // Memuat ulang tabel setelah baris dihapus
+        }
+
+        // Fungsi untuk toggle status selesai/belum selesai
+        function toggleStatus(button, rowIndex, colIndex) {
+            const tableData = JSON.parse(localStorage.getItem('tableData')) || [];
+            const currentStatus = tableData[rowIndex].status[colIndex];
+            tableData[rowIndex].status[colIndex] = currentStatus === "done" ? "pending" : "done";
+
+            button.classList.toggle("done");
+            button.classList.toggle("pending");
+            button.textContent = tableData[rowIndex].status[colIndex] === "done" ? "Selesai" : "Belum Selesai";
+
+            localStorage.setItem('tableData', JSON.stringify(tableData));
+            loadChart(); // Memuat ulang grafik setelah status diubah
+        }
+
+        // Fungsi untuk menuju halaman 2 (grafik)
+        function goToPage2() {
+            document.getElementById('page1').style.display = 'none';
+            document.getElementById('page2').style.display = 'block';
+
+            loadChart(); // Memuat grafik saat halaman kedua dimuat
+        }
+
+        // Fungsi untuk kembali ke halaman 1
+        function goBack() {
+            document.getElementById('page1').style.display = 'block';
+            document.getElementById('page2').style.display = 'none';
+        }
+
+        // Fungsi untuk memuat grafik
+        function loadChart() {
+            const tableData = JSON.parse(localStorage.getItem('tableData')) || [];
+            const completed = tableData.reduce((acc, row) => acc + row.status.filter(status => status === "done").length, 0);
+            const total = tableData.length * 31;
+
+            const completedPercentage = (completed / total) * 100;
+            const pendingPercentage = 100 - completedPercentage;
+
+            const ctx = document.getElementById('statusChart').getContext('2d');
+            const chart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: ['Selesai', 'Belum Selesai'],
+                    datasets: [{
+                        label: 'Persentase Status',
+                        data: [completedPercentage, pendingPercentage],
+                        backgroundColor: [
+                            'rgba(39, 174, 96, 0.6)',
+                            'rgba(231, 76, 60, 0.6)'
+                        ],
+                        borderColor: [
+                            'rgba(39, 174, 96, 1)', 
+                            'rgba(231, 76, 60, 1)'
+                        ],
+                        borderWidth: 2,
+                        hoverBackgroundColor: [
+                            'rgba(39, 174, 96, 0.8)',
+                            'rgba(231, 76, 60, 0.8)'
+                        ]
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: {
+                            position: 'top',
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function(tooltipItem) {
+                                    const value = tooltipItem.raw;
+                                    return `${value.toFixed(2)}%`;
+                                }
+                            }
+                        }
+                    },
+                    animation: {
+                        duration: 1500,
+                        easing: 'easeOutBounce',
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            ticks: {
+                                stepSize: 10,
+                                max: 100
+                            }
+                        }
+                    }
+                }
+            });
+
+            const chartInfo = document.createElement('div');
+            chartInfo.style.textAlign = 'center';
+            chartInfo.style.marginTop = '20px';
+            chartInfo.innerHTML = `
+                <strong>Data Tabel MARGA BOTEK</strong>
+                <br>Selesai: ${completedPercentage.toFixed(2)}% | Belum Selesai: ${pendingPercentage.toFixed(2)}%
+            `;
+            document.querySelector('.chart-container').appendChild(chartInfo);
+        }
+
+        loadTable(); // Memuat tabel saat pertama kali halaman dimuat
+    </script>
+
+</body>
+</html>
